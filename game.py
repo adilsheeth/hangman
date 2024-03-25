@@ -112,29 +112,34 @@ word_list = {
 
 letter_list = "abcdefghijklmnopqrstuvwxyz"
 
+# Makes program smoother on Windows
 def clear_screen():
     if os.name == "nt":
         os.system("cls")
 
-def setup():
+# Start of Program
+def setup(name):
     clear_screen()
 
-    print("Welcome to HANGMAN ONLINE!\nSponsored by Big Tech Ltd.\nPrototype v0.5.1")
-    print("The Objective: To guess an ANIMAL before you're out of turns!\n")
-    time.sleep(2)
+    if not name: # Check if player is playing again
+        print("Welcome to HANGMAN ONLINE!\nSponsored by Big Tech Ltd.\nPrototype v0.5.1")
+        print("The Objective: To guess an ANIMAL before you're out of turns!\n")
+        time.sleep(2)
 
-    name = input("What's your Name? ").title()
+        name = input("What's your Name? ").title()
+
     snowman_mode = input("Would you like to play with a SNOWMAN? (Y/N): ").upper() == "Y"
     difficulty = input("Choose your difficulty (E/M/H):").upper()
     if difficulty not in "EMH":
         exit("Invalid Input.")
-    
+    # Choose difficulty
     secret_word = random.choice(word_list[difficulty])
     
     print("\nLet's Play! Good Luck!\n")
     time.sleep(2)
     game(secret_word, name, snowman_mode)
 
+# Main Game
 def game(secret_word, name, snowman_mode):
     clear_screen()
 
@@ -145,7 +150,7 @@ def game(secret_word, name, snowman_mode):
 
     while count < 6:
         if "_" not in uncovered:
-            game_over(True, secret_word)
+            game_over(True, secret_word, name)
 
         print(drawings[draw_type][count])
         print("WORD:", *uncovered)
@@ -153,7 +158,7 @@ def game(secret_word, name, snowman_mode):
         guess = input("Your Guess: ").lower().strip()
 
         if guess == secret_word:
-            game_over(True, secret_word)
+            game_over(True, secret_word, name)
             return
 
         elif len(guess) > 1:
@@ -182,15 +187,15 @@ def game(secret_word, name, snowman_mode):
         clear_screen()
 
     print(drawings[draw_type][count])
-    game_over(False, secret_word)
+    game_over(False, secret_word, name)
 
-def game_over(win, secret_word):
+def game_over(win, secret_word, name):
     if win:
         print("Good job! You guessed it!")
     else:
         print(f"Oh no! Game over.\nThe word was {secret_word}.")
     
-    setup() if input("Play again? (Y/N): ").upper() == "Y" else exit("Bye!")
+    setup(name) if input("Play again? (Y/N): ").upper() == "Y" else exit("Bye!")
 
 if __name__ == "__main__":
-    setup()
+    setup("")
